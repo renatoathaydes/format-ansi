@@ -1,4 +1,4 @@
-x(in-package :format-ansi/tests)
+(in-package :format-ansi/tests)
 
 (declaim (optimize (debug 3)))
 

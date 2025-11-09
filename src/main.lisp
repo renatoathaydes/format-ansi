@@ -82,7 +82,7 @@
   "Wrap CL:FORMAT to be able to mock this function in tests."
   (apply #'format destination control-string format-arguments))
 
-(declaim (ftype (function (T string &key (bg-color ?ansi-color) (fg-color ?ansi-color) (style ?ansi-style)) (or string null)) format-ansi))
+(declaim (ftype (function (T string &key (:bg-color ?ansi-color) (:fg-color ?ansi-color) (:style ?ansi-style)) (or string null)) format-ansi))
 (defun format-ansi (stream text &key bg-color fg-color style)
   "Format some TEXT using ANSI-COLOR and ANSI-STYLE.
    STREAM can be anything accepted by CL:FORMAT.
