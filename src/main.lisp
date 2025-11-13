@@ -82,13 +82,17 @@
   "Wrap CL:FORMAT to be able to mock this function in tests."
   (apply #'format destination control-string format-arguments))
 
-(declaim (ftype (function (T string &key (:bg-color ?ansi-color) (:fg-color ?ansi-color) (:style ?ansi-style)) (or string null)) format-ansi))
-(defun format-ansi (stream text &key bg-color fg-color style)
+(declaim (ftype (function (T string &key
+                             (:bg ?ansi-color)
+                             (:fg ?ansi-color)
+                             (:st ?ansi-style))
+                          (or string null)) format-ansi))
+(defun format-ansi (stream text &key bg fg st)
   "Format some TEXT using ANSI-COLOR and ANSI-STYLE.
    STREAM can be anything accepted by CL:FORMAT.
-   BG-COLOR is the background color.
-   FG-COLOR is the foreground color.
-   STYLE is the ANSI-STYLE.
+   BG is the background color.
+   FG is the foreground color.
+   ST is the ANSI-STYLE.
 
    If no keyword argument is provided, TEXT is returned unchanged.
    Otherwise, the returned value is the same as CL:FORMAT would return given
@@ -96,22 +100,22 @@
 
    Note: TEXT is passed to CL:FORMAT as an argument, not as part of the FORMAT string.
    "
-  (let ((bg (when bg-color (find-code bg-color *bg-colors*)))
-        (fg (when fg-color (find-code fg-color *fg-colors*)))
-        (st (when style (find-code style *styles*))))
+  (let ((bg-code (when bg (find-code bg *bg-colors*)))
+        (fg-code (when fg (find-code fg *fg-colors*)))
+        (st-code (when st (find-code st *styles*))))
     (cond
-      ((and bg fg st)
-       (%format stream "~A[~A;~A;~Am~A~A" #\ESC bg fg st text +reset-all+))
-      ((and bg fg)
-       (%format stream "~A[~A;~Am~A~A" #\ESC bg fg text +reset-all+))
-      ((and bg st)
-       (%format stream "~A[~A;~Am~A~A" #\ESC bg st text +reset-all+))
-      ((and fg st)
-       (%format stream "~A[~A;~Am~A~A" #\ESC fg st text +reset-all+))
-      (bg
-       (%format stream "~A[~Am~A~A" #\ESC bg text +reset-all+))
-      (fg
-       (%format stream "~A[~Am~A~A" #\ESC fg text +reset-all+))
-      (st
-       (%format stream "~A[~Am~A~A" #\ESC st text +reset-all+))
+      ((and bg-code fg-code st-code)
+       (%format stream "~A[~A;~A;~Am~A~A" #\ESC bg-code fg-code st-code text +reset-all+))
+      ((and bg-code fg-code)
+       (%format stream "~A[~A;~Am~A~A" #\ESC bg-code fg-code text +reset-all+))
+      ((and bg-code st-code)
+       (%format stream "~A[~A;~Am~A~A" #\ESC bg-code st-code text +reset-all+))
+      ((and fg-code st-code)
+       (%format stream "~A[~A;~Am~A~A" #\ESC fg-code st-code text +reset-all+))
+      (bg-code
+       (%format stream "~A[~Am~A~A" #\ESC bg-code text +reset-all+))
+      (fg-code
+       (%format stream "~A[~Am~A~A" #\ESC fg-code text +reset-all+))
+      (st-code
+       (%format stream "~A[~Am~A~A" #\ESC st-code text +reset-all+))
       ('otherwise text))))
