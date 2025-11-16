@@ -1,5 +1,7 @@
 #! /bin/sh
 
+rm {src,tests}/*.fasl
+
 sbcl --script /dev/stdin <<'EOF'
 #-quicklisp
 (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp" (user-homedir-pathname))))
@@ -7,6 +9,10 @@ sbcl --script /dev/stdin <<'EOF'
     (load quicklisp-init)))
 
 (setq *backtrace-frame-count* 8)
+
+;; enable debug info, including warnings!
+(pushnew :development *features*)
+
 (require "quicklisp")
 (require "asdf")
 (load "format-ansi.asd")

@@ -4,23 +4,28 @@
 
 (defun newline () (format T "~%"))
 
-(format-ansi T "Basic examples:" :style :bold)
+;; each entry may contain styles within it, or be just plain text
+(format-ansi T `((:st :bold "FORMAT-ANSI ") " Examples:"))
 (newline)
-(format-ansi T "Yellow background, Red foreground." :bg-color :yellow :fg-color :red)
+;; Using only "global" styles, i.e. styles that apply to all entries
+(format-ansi T '("Yellow background, Red foreground.") :bg :yellow :fg :red)
 (newline)
-(format-ansi T "Blue background, White foreground." :bg-color :blue :fg-color :white)
+;; this example mixes global styles with per-entry styles
+(format-ansi T '((:st :underline "Blue") " background, "
+                 (:st :underline "White") " foreground.")
+             :bg :blue :fg :white)
 (newline)
 
-(format-ansi T "A checkers pattern:" :style :italic)
+(format-ansi T '("A checkers pattern:") :st :italic)
 (newline)
 (loop for i from 0 to 10
       do (loop for j from 0 to 10
                for flag = (evenp i) then (not flag)
-               do (format-ansi T "  " :bg-color (if flag :white :black)))
+               do (format-ansi T '("  ") :bg (if flag :white :black)))
          (newline))
 (newline)
 
-(format-ansi T "All colors:" :style :italic)
+(format-ansi T '("All colors:") :st :italic)
 (newline)
 (let ((index 0)
       (words #("FORMAT" "-ANSI" "!!!!")))
@@ -28,9 +33,9 @@
     (dolist (fg-color *fg-colors*)
       (let ((text (aref words (mod index (length words)))))
         (declare (type string text))
-        (format-ansi T text
-                   :bg-color (car bg-color)
-                   :fg-color (car fg-color))
+        (format-ansi T (list text)
+                     :bg (car bg-color)
+                     :fg (car fg-color))
         (setf index (1+ index))))
     (newline)))
 (newline)
