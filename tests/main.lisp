@@ -56,8 +56,13 @@
       (expected-str #\ESC "[44m" #\ESC "[35m" #\ESC "[4mfoo;bar")
       (format-ansi nil '("foo;bar") :st :underline :bg :blue :fg :magenta)))
 
-;; (define-test stream-arg-passed-to-format-as-is
-;;   (let ((captured-args (mocking-format (format-args)
-;;                          (format-ansi T "hello" :st :visible)
-;;                          format-args)))
-;;     (is equalp (list T "~A[~Am~A~A" (list #\ESC 28 "hello" +reset-all+)) captured-args)))
+(define-test many-ansi-entries
+  (is equal
+      (expected-str #\ESC "[22m" #\ESC "[36mhi" +reset-all+
+                    #\ESC "[22m" #\ESC "[9m" #\ESC "[43mho")
+      (format-ansi nil '((:fg :cyan "hi") (:st :cross-out :bg :yellow "ho")) :st :normal)))
+
+(define-test only-ansi-entries
+  (is equal
+      (expected-str #\ESC "[37m" #\ESC "[27m" #\ESC "[46mho")
+      (format-ansi nil '((:fg :white :st :positive :bg :cyan "ho")))))

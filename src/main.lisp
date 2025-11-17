@@ -127,6 +127,12 @@
            (cdr ,cell)
            (error "not a valid ~A: ~A" ,key-name ,key)))))
 
+(defmacro do-around (before after &body body)
+  `(progn
+     (,before)
+     ,@body
+     (,after)))
+
 (declaim (ftype (function ((or string ansi-entry-list)
                            (?ansi-color)
                            (?ansi-color)
@@ -166,23 +172,26 @@
       (let ((bg-code (when bg (find-code bg *bg-colors*)))
             (fg-code (when fg (find-code fg *fg-colors*)))
             (st-code (when st (find-code st *styles*))))
-        ;; reset all before starting
-        (princ +reset-all+ stream)
-        (when bg-code (print-code bg-code stream))
-        (when fg-code (print-code fg-code stream))
-        (when st-code (print-code st-code stream))
-        (typecase args
-          (string (princ args stream))
-          (T (dolist (entry args)
-          (typecase entry
-            (string (princ entry stream))
-            (T (loop for (k v) on entry by #'cddr
-                     do ;; only the last entry will be a lone k
-                        (if v
-                            (print-ansi k v stream)
-                            (princ k stream))))))))
-        ;; reset all after each iteration
-        (princ +reset-all+ stream)
+        (flet ((print-outer ()
+                 (when bg-code (print-code bg-code stream))
+                 (when fg-code (print-code fg-code stream))
+                 (when st-code (print-code st-code stream)))
+               (reset-all ()
+                 (princ +reset-all+ stream)))
+          (reset-all)
+          (typecase args
+            (string
+             (do-around print-outer reset-all
+               (princ args stream)))
+            (T (dolist (entry args)
+                 (do-around print-outer reset-all
+                   (typecase entry
+                     (string (princ entry stream))
+                     (T (loop for (k v) on entry by #'cddr
+                              do ;; only the last entry will be a lone k
+                                 (if v
+                                     (print-ansi k v stream)
+                                     (princ k stream))))))))))
         nil)))
 
 (defun print-ansi (key value stream)

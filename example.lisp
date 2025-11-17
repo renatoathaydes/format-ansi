@@ -12,8 +12,8 @@
 (newline)
 ;; this example mixes global styles with per-entry styles
 (format-ansi T '((:st :underline "Blue") " background, "
-                 (:st :underline "White") " foreground.")
-             :bg :blue :fg :white)
+                 (:st :bold "Magenta") " foreground.")
+             :bg :blue :fg :magenta)
 (newline)
 
 (format-ansi T '("A checkers pattern:") :st :italic)
