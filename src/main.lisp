@@ -188,9 +188,9 @@
    Example usage:
      ;; print BOLD output, 'hi ' in ITALIC, then the value of NAME
      ;; with blue background, yellow foreground.
-     (format-ansi T `((:st :italic \"hi\")
+     (format-ansi T `((:st :italic "hi")
                       (:bg :blue :fg :yellow ,name))
-                    :st bold)
+                    :st :bold)
    "
   (if (null stream)
       (format-to-string args bg fg st)

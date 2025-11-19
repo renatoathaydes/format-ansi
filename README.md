@@ -61,6 +61,8 @@ Besides named colors, format-ansi also supports 256-integer colors:
 Here's how to print all the integer colors:
 
 ```lisp
+(format-ansi T "All 256-integer colors:~%" :st :italic)
+
 (loop for c from 0 to 255
       do (format-ansi T (format nil "~8:@<~A~>" c)
                       :bg c
@@ -71,6 +73,12 @@ Here's how to print all the integer colors:
 Output (on MacOS Terminal):
 
 ![256 colors shown on MacOS Terminal](docs/images/256-colors.png)
+
+## format-ansi function type
+
+Function type as displayed by `company-documentation` in emacs:
+
+![format-ansi documentation in emacs](docs/images/format-ansi-docs.png)
 
 ## Installation
 
