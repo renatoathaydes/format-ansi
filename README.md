@@ -2,12 +2,12 @@
 
 Basic functionality to format text with ANSI colors and styles.
 
-This library is focused on performance, hence it avoids allocating memory.
-It provides an API similar to `CL:FORMAT`, which allows for efficient output.
+This library is focused on performance and usability.
+It provides an API similar to `CL:FORMAT` which allows for efficient output and is easy to remember.
 
 ## Usage
 
-* Basic string argument, set background, foreground and style:
+* Basic string argument, setting background, foreground and style:
 
 ```lisp
 (ansi:format-ansi T "Example"
@@ -18,7 +18,7 @@ It provides an API similar to `CL:FORMAT`, which allows for efficient output.
 
 ![Blue background with yellow foreground, bold](docs/images/bg_blue_fg_yellow.jpg)
 
-* List of arguments, each with own style:
+* List of arguments, each with its own style:
 
 ```lisp
 (ansi:format-ansi T '((:bg :magenta "HELLO") (:fg :red "BYE!")))
@@ -34,7 +34,7 @@ It provides an API similar to `CL:FORMAT`, which allows for efficient output.
 
 ![Green background, bold](docs/images/bg_green_fg_white_bold.jpg)
 
-To see all available colors and styles, run:
+To see all available named colors and styles, run:
 
 ```lisp
 CL-USER> (mapcar #'(lambda (e) (car e))
@@ -46,9 +46,31 @@ CL-USER> (mapcar #'(lambda (e) (car e))
  :NO-UNDERLINE :POSITIVE :VISIBLE :NO-CROSS-OUT)
 ```
 
-* [example.lisp](example.lisp)
+* some samples from [example.lisp](example.lisp) as seen on eshell:
 
 ![Example showing many colors and styles](docs/images/example.jpg)
+
+## 256 colors
+
+Besides named colors, format-ansi also supports 256-integer colors:
+
+```lisp
+(ansi:format-ansi T "256 colors!" :bg 226 :fg 196)
+```
+
+Here's how to print all the integer colors:
+
+```lisp
+(loop for c from 0 to 255
+      do (format-ansi T (format nil "~8:@<~A~>" c)
+                      :bg c
+                      :fg (- 255 c))
+         (when (zerop (mod (1+ c) 8)) (newline)))
+```
+
+Output (on MacOS Terminal):
+
+![256 colors shown on MacOS Terminal](docs/images/256-colors.png)
 
 ## Installation
 
@@ -66,7 +88,7 @@ Run from a terminal:
 ./test.sh
 ```
 
-From REPL:
+Run from the REPL:
 
 ```lisp
 ;; load

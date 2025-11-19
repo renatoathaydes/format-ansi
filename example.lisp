@@ -16,7 +16,7 @@
              :bg :blue :fg :magenta)
 (newline)
 
-(format-ansi T '("A checkers pattern:") :st :italic)
+(format-ansi T "A checkers pattern:" :st :italic)
 (newline)
 (loop for i from 0 to 10
       do (loop for j from 0 to 10
@@ -25,7 +25,7 @@
          (newline))
 (newline)
 
-(format-ansi T '("All colors:") :st :italic)
+(format-ansi T "All BASIC colors:" :st :italic)
 (newline)
 (let ((index 0)
       (words #("FORMAT" "-ANSI" "!!!!")))
@@ -33,9 +33,20 @@
     (dolist (fg-color *fg-colors*)
       (let ((text (aref words (mod index (length words)))))
         (declare (type string text))
-        (format-ansi T (list text)
+        (format-ansi T text
                      :bg (car bg-color)
                      :fg (car fg-color))
         (setf index (1+ index))))
     (newline)))
 (newline)
+
+(format-ansi T "All 256-integer colors:" :st :italic)
+(newline)
+(loop for c from 0 to 255
+      do (format-ansi T (format nil "~8:@<~A~>" c)
+                      :bg c
+                      :fg (- 255 c))
+         (when (zerop (mod (1+ c) 8)) (newline)))
+
+(newline)
+
