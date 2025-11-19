@@ -58,6 +58,8 @@ Besides named colors, format-ansi also supports 256-integer colors:
 (ansi:format-ansi T "256 colors!" :bg 226 :fg 196)
 ```
 
+![Example output with 256-int colors](docs/images/simple-256-colors.png)
+
 Here's how to print all the integer colors:
 
 ```lisp
