@@ -62,7 +62,7 @@
 
 (deftype ansi-color ()
   "The valid ANSI-COLORS."
-  `(member :BLACK :RED :GREEN :YELLOW :BLUE :MAGENTA :CYAN :WHITE :RESET))
+  `(or (integer 0 255) (member :BLACK :RED :GREEN :YELLOW :BLUE :MAGENTA :CYAN :WHITE :RESET)))
 
 (deftype ?ansi-color ()
   "Optional ANSI-COLOR."
@@ -115,17 +115,42 @@
 
 (defparameter +reset-all+ (concatenate 'string '(#\ESC) "[0m"))
 
-(declaim (ftype (function (fixnum T)) print-code))
-(defun print-code (code stream)
-  (format stream "~A[~Am" #\ESC code))
+(declaim (ftype (function (cons T)) print-code))
+(defun print-code (code-cell stream)
+  (let ((key (car code-cell))
+        (val (cdr code-cell)))
+    (etypecase val
+      ;; case where VAL is a CELL from the tables above.
+      (cons (let ((code (cdr val)))
+              (check-type code integer)
+              (format stream "~A[~Am" #\ESC code)))
+      ;; if integer, it's a color from 0 to 255,
+      ;; printed as ESC[48;5;{ID}m for BG, or ESC[38;5;{ID}m for FG.
+      (integer (let ((code (ecase key
+                             (:bg 48)
+                             (:fg 38))))
+                 (format stream "~A[~A;5;~Am" #\ESC code val))))))
 
-(defmacro find-code (key items)
-  (let ((key-name (symbol-name key))
-        (cell (gensym)))
-    `(let ((,cell (assoc ,key ,items)))
-       (if ,cell
-           (cdr ,cell)
-           (error "not a valid ~A: ~A" ,key-name ,key)))))
+(defmacro find-code (key key-name)
+  "If KEY is INTEGER and KEY-NAME is of type ANSI-COLOR-KEY,
+   return (CONS KEY-NAME KEY) (where KEY is a 0-255 color).
+   Otherwise, find KEY in the appropriate ALIST (of colors or styles).
+   Returns the cell corresponding to the KEY in (CONS KEY-NAME CELL).
+   If not found, an error is raised."
+  (let ((cell (gensym))
+        (items (gensym)))
+    `(typecase ,key
+       (integer
+        (unless (typep ,key-name 'ansi-color-key)
+          (error "Expected ansi-color-key, not ~A" ,key-name))
+        (cons ,key-name ,key))
+       (t (let* ((,items (ecase ,key-name
+                           (:bg *bg-colors*)
+                           (:fg *fg-colors*)
+                           (:st *styles*)))
+                 (,cell (assoc ,key ,items)))
+            (or (cons ,key-name ,cell)
+                (error "not valid key ~A into ~A" (symbol-name ,key) ,items)))))))
 
 (defmacro do-around (before after &body body)
   `(progn
@@ -169,9 +194,9 @@
    "
   (if (null stream)
       (format-to-string args bg fg st)
-      (let ((bg-code (when bg (find-code bg *bg-colors*)))
-            (fg-code (when fg (find-code fg *fg-colors*)))
-            (st-code (when st (find-code st *styles*))))
+      (let ((bg-code (when bg (find-code bg :bg)))
+            (fg-code (when fg (find-code fg :fg)))
+            (st-code (when st (find-code st :st))))
         (flet ((print-outer ()
                  (when bg-code (print-code bg-code stream))
                  (when fg-code (print-code fg-code stream))
@@ -196,13 +221,7 @@
 
 (defun print-ansi (key value stream)
   "Prints an ANSI code."
-  (print-code (find-code
-               value
-               (ecase key
-                 (:bg *bg-colors*)
-                 (:fg *fg-colors*)
-                 (:st *styles*)))
-              stream))
+  (print-code (find-code value key) stream))
 
 (defun format-to-string (args bg fg st)
   (let ((s (make-string-output-stream)))
