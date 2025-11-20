@@ -30,4 +30,4 @@ jobs:
         with:
           implementation: '${{ matrix.implementation }}'
           system: 'format-ansi'
-          operation: 'test-op'
+          operation: 'asdf:test-op'
