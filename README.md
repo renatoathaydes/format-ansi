@@ -39,12 +39,17 @@ To see all available named colors and styles, run:
 ```lisp
 CL-USER> (mapcar #'(lambda (e) (car e))
                  ansi::*bg-colors*)
-(:BLACK :RED :GREEN :YELLOW :BLUE :MAGENTA :CYAN :WHITE :RESET)
+(:BLACK :RED :GREEN :YELLOW :BLUE :MAGENTA :CYAN :WHITE :BBLACK :BRED :BGREEN
+ :BYELLOW :BBLUE :BMAGENTA :BCYAN :BWHITE :RESET)
 CL-USER> (mapcar #'(lambda (e) (car e))
                  ansi::*styles*)
 (:BOLD :DIM :ITALIC :UNDERLINE :BLINK :NEGATIVE :HIDDEN :CROSS-OUT :NORMAL
  :NO-UNDERLINE :POSITIVE :VISIBLE :NO-CROSS-OUT)
 ```
+
+> Bright colors have a `B` prefixed to their names. Hence,
+  `BBLACK` means _bright black_ (otherwise known as _gray_), `BRED` means _bright red_
+  and so on.
 
 * some samples from [example.lisp](example.lisp) as seen on eshell:
 

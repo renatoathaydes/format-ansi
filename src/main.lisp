@@ -39,30 +39,48 @@
     (:NO-CROSS-OUT . 29)))
 
 (defparameter *fg-colors*
-  '((:BLACK   . 30)
-    (:RED     . 31)
-    (:GREEN   . 32)
-    (:YELLOW  . 33)
-    (:BLUE    . 34)
-    (:MAGENTA . 35)
-    (:CYAN    . 36)
-    (:WHITE   . 37)
-    (:RESET   . 39)))
+  '((:BLACK    . 30)
+    (:RED      . 31)
+    (:GREEN    . 32)
+    (:YELLOW   . 33)
+    (:BLUE     . 34)
+    (:MAGENTA  . 35)
+    (:CYAN     . 36)
+    (:WHITE    . 37)
+    (:BBLACK   . 90)
+    (:BRED     . 91)
+    (:BGREEN   . 92)
+    (:BYELLOW  . 93)
+    (:BBLUE    . 94)
+    (:BMAGENTA . 95)
+    (:BCYAN    . 96)
+    (:BWHITE   . 97)
+    (:RESET    . 39)))
 
 (defparameter *bg-colors*
-  '((:BLACK   . 40)
-    (:RED     . 41)
-    (:GREEN   . 42)
-    (:YELLOW  . 43)
-    (:BLUE    . 44)
-    (:MAGENTA . 45)
-    (:CYAN    . 46)
-    (:WHITE   . 47)
-    (:RESET   . 49)))
+  '((:BLACK    . 40)
+    (:RED      . 41)
+    (:GREEN    . 42)
+    (:YELLOW   . 43)
+    (:BLUE     . 44)
+    (:MAGENTA  . 45)
+    (:CYAN     . 46)
+    (:WHITE    . 47)
+    (:BBLACK   . 100)
+    (:BRED     . 101)
+    (:BGREEN   . 102)
+    (:BYELLOW  . 103)
+    (:BBLUE    . 104)
+    (:BMAGENTA . 105)
+    (:BCYAN    . 106)
+    (:BWHITE   . 107)
+    (:RESET    . 49)))
 
 (deftype ansi-color ()
   "The valid ANSI-COLORS."
-  `(or (integer 0 255) (member :BLACK :RED :GREEN :YELLOW :BLUE :MAGENTA :CYAN :WHITE :RESET)))
+  `(or (integer 0 255) (member
+                        :BLACK :RED :GREEN :YELLOW :BLUE :MAGENTA :CYAN :WHITE :RESET
+                        :BBLACK :BRED :BGREEN :BYELLOW :BBLUE :BMAGENTA :BCYAN :BWHITE)))
 
 (deftype ?ansi-color ()
   "Optional ANSI-COLOR."
@@ -70,7 +88,8 @@
 
 (deftype ansi-style ()
   "The valid ANSI-STYLES."
-  `(member :BOLD :DIM :ITALIC :UNDERLINE :BLINK :NEGATIVE :HIDDEN :CROSS-OUT :NORMAL :NO-UNDERLINE :POSITIVE :VISIBLE :NO-CROSS-OUT))
+  `(member :BOLD :DIM :ITALIC :UNDERLINE :BLINK :NEGATIVE :HIDDEN :CROSS-OUT
+           :NORMAL :NO-UNDERLINE :POSITIVE :VISIBLE :NO-CROSS-OUT))
 
 (deftype ?ansi-style ()
   "Optional ANSI-STYLE."
@@ -188,7 +207,7 @@
    Example usage:
      ;; print BOLD output, 'hi ' in ITALIC, then the value of NAME
      ;; with blue background, yellow foreground.
-     (format-ansi T `((:st :italic "hi")
+     (format-ansi T `((:st :italic \"hi\")
                       (:bg :blue :fg :yellow ,name))
                     :st :bold)
    "
