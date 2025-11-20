@@ -66,3 +66,8 @@
   (is equal
       (expected-str #\ESC "[37m" #\ESC "[27m" #\ESC "[46mho")
       (format-ansi nil '((:fg :white :st :positive :bg :cyan "ho")))))
+
+(define-test bg-fg-256-colors
+  (is equal
+      (expected-str #\ESC "[38;5;32m" #\ESC "[48;5;64mfoo")
+      (format-ansi nil '((:bg 64 "foo")) :fg 32)))
