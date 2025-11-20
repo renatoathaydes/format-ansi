@@ -1,16 +1,15 @@
 (import '(asdf:defsystem asdf:test-op))
 
 (defsystem "format-ansi"
-  :version "0.0.1"
+  :version "0.1.0"
   :author "Renato Athaydes"
   :license "GPL"
   :depends-on ()
   :pathname "src"
   :components ((:file "main"))
   :description "Basic functionality to format text with ANSI colors and styles.
-   This library is focused on performance, hence it avoids allocating memory.
-   It provides an API similar to CL:FORMAT,
-   which allows for efficient output."
+   This library is focused on performance and usability.
+   It provides an API similar to CL:FORMAT, which allows for efficient output."
   :in-order-to ((test-op (test-op "format-ansi/tests"))))
 
 (defsystem "format-ansi/tests"
