@@ -15,10 +15,12 @@
 (defsystem "format-ansi/tests"
   :author "Renato Athaydes"
   :license "GPL"
-  :depends-on ("format-ansi" "parachute")
+  :depends-on ("format-ansi" "clunit2")
   :pathname "tests"
   :components ((:file "package")
+               (:file "runner" :depends-on ("package"))
                (:file "test-helpers" :depends-on ("package"))
                (:file "main" :depends-on ("test-helpers" "package")))
   :description "Test system for format-ansi"
-  :perform (test-op (op c) (uiop:symbol-call :parachute :test :format-ansi/tests)))
+  :perform (test-op (op c)
+                    (uiop:symbol-call :format-ansi/tests :run-tests)))

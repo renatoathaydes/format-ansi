@@ -1,2 +1,3 @@
 (defpackage format-ansi/tests
-  (:use :cl :format-ansi :parachute))
+  (:use :cl :format-ansi :clunit)
+  (:export #:run-tests))
