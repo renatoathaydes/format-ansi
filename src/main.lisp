@@ -107,19 +107,22 @@
   "Returns T if ENTRY is an ANSI-ENTRY, NIL otherwise.
   See ANSI-ENTRY-LIST for details about what is an ANSI-ENTRY."
   (typecase entry
-    (list (let ((len (length entry)))
-            (and
-             (oddp len)
-             (<= len 7) ;; e.g. (:fg :red :bg: :blue :st :italic "hi")
-             (loop for (k v) on entry by #'cddr while v
-                   always (or
-                           (and (typep k 'ansi-color-key) (typep v 'ansi-color))
-                           (and (eq k :st) (typep v 'ansi-style)))))))
+    (list   (loop for rem on entry
+                  do (typecase (car rem)
+                       ;; STRING followed by anything is ok
+                       (string (return T))
+                       (ansi-color-key ; check and skip next entry, or fail
+                        (typecase (second rem)
+                          (ansi-color (setq rem (cdr rem)))
+                          (otherwise (return nil))))
+                       (ansi-key ; same as previous, but must be style here
+                        (typecase (second rem)
+                          (ansi-style (setq rem (cdr rem)))
+                          (otherwise (return nil)))))))
     (string T)))
-  
 
 (defun ansi-entries? (lst)
-    "Function that checks if LST satisfies type ANSI-ENTRY-LIST."
+  "Function that checks if LST satisfies type ANSI-ENTRY-LIST."
   (and (listp lst)
        (every #'ansi-entry? lst)))
 
@@ -127,9 +130,10 @@
   "A list of ANSI entries.
  Each member of the LIST must satisfy one of the following conditions:
      * it is a STRING.
-     * it is a LIST with odd length, finishing with the item to print,
-       preceded by up to 2 pairs of ANSI-COLOR-KEY -> ANSI-COLOR, and optionally
-       a pair like :ST -> ANSI-STYLE."
+     * it is a LIST matching the following conditions:
+         - it contains a STRING followed by any number of items.
+         - it contains pairs of ANSI-COLOR-KEY -> ANSI-COLOR or
+           :ST -> ANSI-STYLE items, then a STRING followed by any number of items."
   `(satisfies ansi-entries?))
 
 (defparameter +reset-all+ (concatenate 'string '(#\ESC) "[0m"))
@@ -202,6 +206,9 @@
    FG is the foreground color of the whole output.
    ST is the ANSI-STYLE of the whole output.
 
+   STRINGs in an ANSI-ENTRY-LIST are used as CONTROL-STRING,
+   and hence may be followed by arguments.
+
    Returns a STRING if STREAM is NIL, NIL otherwise.
 
    Example usage:
@@ -223,20 +230,24 @@
                (reset-all ()
                  (princ +reset-all+ stream)))
           (reset-all)
-          (typecase args
+          (etypecase args
             (string
              (do-around print-outer reset-all
                (princ args stream)))
-            (T (dolist (entry args)
-                 (do-around print-outer reset-all
-                   (typecase entry
-                     (string (princ entry stream))
-                     (T (loop for (k v) on entry by #'cddr
-                              do ;; only the last entry will be a lone k
-                                 (if v
-                                     (print-ansi k v stream)
-                                     (princ k stream))))))))))
-        nil)))
+            (list (dolist (entry args)
+                    (do-around print-outer reset-all
+                      (etypecase entry
+                        (string (format stream entry))
+                        (list (loop for rem on entry
+                                    do (etypecase (car rem)
+                                         (string ; STRING followed by anything ends iteration
+                                          (apply #'format stream rem)
+                                          (return))
+                                         (ansi-key
+                                          ;; use the KEY-VALUE and skip VALUE next iteration
+                                          (print-ansi (car rem) (second rem) stream)
+                                          (setq rem (cdr rem)))))))))))
+          nil))))
 
 (defun print-ansi (key value stream)
   "Prints an ANSI code."

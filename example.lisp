@@ -8,7 +8,8 @@
 (format-ansi T `((:st :bold "FORMAT-ANSI ") " Examples:"))
 (newline)
 ;; Using only "global" styles, i.e. styles that apply to all entries
-(format-ansi T '("Yellow background, Red foreground.") :bg :yellow :fg :red)
+;; Notice how the first string is used as CONTROL-STRING, as with CL:FORMAT.
+(format-ansi T '(("~A background, ~A foreground." :yellow :red)) :bg :yellow :fg :red)
 (newline)
 ;; this example mixes global styles with per-entry styles
 (format-ansi T '((:st :underline "Blue") " background, "
