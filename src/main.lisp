@@ -243,8 +243,7 @@
                                          (string ; STRING followed by anything ends iteration
                                           (apply #'format stream rem)
                                           (return))
-                                         (ansi-key
-                                          ;; use the KEY-VALUE and skip VALUE next iteration
+                                         (ansi-key ; use the KEY-VALUE and skip VALUE next iteration
                                           (print-ansi (car rem) (second rem) stream)
                                           (setq rem (cdr rem)))))))))))
           nil))))
