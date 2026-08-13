@@ -10,7 +10,8 @@
            #:ansi-entry-list
            #:ansi-key
            #:ansi-color-key
-           #:+reset-all+)
+           #:+reset-all+
+           #:*enabled*)
   (:nicknames #:ansi)
   (:documentation "Basic functionality to format text with ANSI colors and styles."))
 
@@ -20,6 +21,10 @@
 #+development
 (declaim (optimize (debug 3) (safety 3) (speed 0)))
 
+(defparameter *enabled* T
+  "Whether ANSI-COLOR and ANSI-STYLE formatting should be enabled.
+   To disable it in interactive LISP sessions, use:
+   (setf format-ansi:*enabled* (not uiop:*lisp-interaction*))")
 
 ;; Reference: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 
@@ -224,11 +229,13 @@
             (fg-code (when fg (find-code fg :fg)))
             (st-code (when st (find-code st :st))))
         (flet ((print-outer ()
-                 (when bg-code (print-code bg-code stream))
-                 (when fg-code (print-code fg-code stream))
-                 (when st-code (print-code st-code stream)))
+                 (when *enabled*
+                   (when bg-code (print-code bg-code stream))
+                   (when fg-code (print-code fg-code stream))
+                   (when st-code (print-code st-code stream))))
                (reset-all ()
-                 (princ +reset-all+ stream)))
+                 (when *enabled*
+                   (princ +reset-all+ stream))))
           (reset-all)
           (etypecase args
             (string
@@ -244,7 +251,7 @@
                                           (apply #'format stream rem)
                                           (return))
                                          (ansi-key ; use the KEY-VALUE and skip VALUE next iteration
-                                          (print-ansi (car rem) (second rem) stream)
+                                          (when *enabled* (print-ansi (car rem) (second rem) stream))
                                           (setq rem (cdr rem)))))))))))
           nil))))
 

@@ -34,6 +34,10 @@ It provides an API similar to `CL:FORMAT` which allows for efficient output and 
 
 ![Green background, bold](docs/images/bg_green_fg_white_bold.jpg)
 
+> To disable colors and styles, use `format-ansi:*enable*`.
+> For example, to disable it in the REPL, use
+> `(setf format-ansi:*enabled* (not uiop:*lisp-interaction*))`.
+
 To see all available named colors and styles, run:
 
 ```lisp

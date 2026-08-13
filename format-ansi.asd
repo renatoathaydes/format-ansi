@@ -20,7 +20,7 @@
   :components ((:file "package")
                (:file "runner" :depends-on ("package"))
                (:file "test-helpers" :depends-on ("package"))
-               (:file "main" :depends-on ("test-helpers" "package")))
+               (:file "main" :depends-on ("test-helpers")))
   :description "Test system for format-ansi"
   :perform (test-op (op c)
                     (uiop:symbol-call :format-ansi/tests :run-tests)))
