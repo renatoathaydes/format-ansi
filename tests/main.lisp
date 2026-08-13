@@ -1,9 +1,5 @@
 (in-package :format-ansi/tests)
 
-(defmacro expected-str (&rest text-parts)
-  `(progn
-     (conc-str +reset-all+ ,@text-parts +reset-all+)))
-
 (defsuite basic ())
 
 (defsuite named-colors ())
@@ -22,6 +18,10 @@
   (assert-equalp
       (expected-str "hello")
       (format-ansi nil "hello")))
+
+(deftest empty-list-arg (basic)
+  (assert-equalp
+   "" (format-ansi nil '())))
 
 (deftest string-list-arg (basic)
   (assert-equalp

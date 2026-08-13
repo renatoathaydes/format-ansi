@@ -26,6 +26,13 @@ It provides an API similar to `CL:FORMAT` which allows for efficient output and 
 
 ![Magenta background, white foreground, red background](docs/images/bg_mag_fg_white_bg_red.jpg)
 
+Notice that the string inside each list is a `CONTROL-STRING`, so it may be followed by arguments
+just like in `CL:FORMAT`:
+
+```lisp
+(ansi:format-ansi T '((:bg :magenta "HELLO ~A" name))
+```
+
 * Both list of arguments with styles and _outer_ styles:
 
 ```lisp

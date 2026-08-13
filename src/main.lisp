@@ -236,7 +236,7 @@
                (reset-all ()
                  (when *enabled*
                    (princ +reset-all+ stream))))
-          (reset-all)
+          (unless (null args) (reset-all))
           (etypecase args
             (string
              (do-around print-outer reset-all

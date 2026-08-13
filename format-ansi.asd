@@ -20,6 +20,7 @@
   :components ((:file "package")
                (:file "runner" :depends-on ("package"))
                (:file "test-helpers" :depends-on ("package"))
+               (:file "types" :depends-on ("test-helpers"))
                (:file "main" :depends-on ("test-helpers")))
   :description "Test system for format-ansi"
   :perform (test-op (op c)
