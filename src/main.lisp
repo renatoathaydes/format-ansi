@@ -235,7 +235,16 @@
                    (when st-code (print-code st-code stream))))
                (reset-all ()
                  (when *enabled*
-                   (princ +reset-all+ stream))))
+                   (princ +reset-all+ stream)))
+               (print-ansi-entries (entries)
+                 (loop for rem on entries
+                       do (etypecase (car rem)
+                            (string ; STRING followed by anything ends iteration
+                             (apply #'format stream rem)
+                             (return))
+                            (ansi-key ; use the KEY-VALUE and skip VALUE next iteration
+                             (when *enabled* (print-ansi (car rem) (second rem) stream))
+                             (setq rem (cdr rem)))))))
           (unless (null args) (reset-all))
           (etypecase args
             (string
@@ -245,14 +254,7 @@
                     (do-around print-outer reset-all
                       (etypecase entry
                         (string (format stream entry))
-                        (list (loop for rem on entry
-                                    do (etypecase (car rem)
-                                         (string ; STRING followed by anything ends iteration
-                                          (apply #'format stream rem)
-                                          (return))
-                                         (ansi-key ; use the KEY-VALUE and skip VALUE next iteration
-                                          (when *enabled* (print-ansi (car rem) (second rem) stream))
-                                          (setq rem (cdr rem)))))))))))
+                        (list (print-ansi-entries entry)))))))
           nil))))
 
 (defun print-ansi (key value stream)
