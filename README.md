@@ -30,7 +30,7 @@ Notice that the string inside each list is a `CONTROL-STRING`, so it may be foll
 just like in `CL:FORMAT`:
 
 ```lisp
-(ansi:format-ansi T '((:bg :magenta "HELLO ~A" name))
+(ansi:format-ansi T `((:bg :magenta "HELLO ~A" ,name)))
 ```
 
 * Both list of arguments with styles and _outer_ styles:

@@ -79,6 +79,12 @@
       (expected-str #\ESC "[38;5;32m" #\ESC "[48;5;64mfoo")
       (format-ansi nil '((:bg 64 "foo")) :fg 32)))
 
+(deftest bg-fg-256-colors-with-variable (colors-256)
+  (let ((x 42))
+    (assert-equalp
+        (expected-str #\ESC "[38;5;32m" #\ESC "[48;5;64mx is 42")
+        (format-ansi nil `((:bg 64 "x is ~A" ,x)) :fg 32))))
+
 (deftest top-level-styles (disabled-format)
   (let ((*enabled* nil))
     (assert-equalp "hello" (format-ansi nil "hello" :fg :red :bg :yellow :st :bold))))
