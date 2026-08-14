@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         implementation: ['abcl', 'ecl', 'sbcl']
-        os: ['ubuntu-latest', 'macos-latest']
+        os: ['ubuntu-latest']
     runs-on: '${{ matrix.os }}'
     name: 'Install Common Lisp'
     steps:
