@@ -1,8 +1,5 @@
 (import '(asdf:defsystem asdf:test-op))
 
-;;; Configure local dependencies
-(asdf:load-asd "/Users/renatoathaydes/programming/projects/cl-lustre-tests/cl-lustre-tests.asd")
-
 (defsystem "format-ansi"
   :version "0.1.0"
   :author "Renato Athaydes"

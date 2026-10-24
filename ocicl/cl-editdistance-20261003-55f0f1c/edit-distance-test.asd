@@ -1,0 +1,16 @@
+;; -*- Mode: Lisp -*- 
+
+(asdf:defsystem "edit-distance-test"
+  :name "edit-distance-test"
+  :description "Computing edit distance between sequences."
+  :version "1.0.0"
+  :author "Ben Lambert <blambert@gmail.com>"
+  :license "MIT"
+  :serial t
+  :components
+  ((:module src
+    :serial t
+    :components
+    ((:file "test"))))
+  :depends-on ("edit-distance" "lisp-unit")
+  :perform (test-op (o c) (uiop:symbol-call :edit-distance-tests :run)))
