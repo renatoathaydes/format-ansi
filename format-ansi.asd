@@ -1,5 +1,8 @@
 (import '(asdf:defsystem asdf:test-op))
 
+;;; Configure local dependencies
+(asdf:load-asd "/Users/renatoathaydes/programming/projects/cl-lustre-tests/cl-lustre-tests.asd")
+
 (defsystem "format-ansi"
   :version "0.1.0"
   :author "Renato Athaydes"
@@ -15,7 +18,7 @@
 (defsystem "format-ansi/tests"
   :author "Renato Athaydes"
   :license "GPL"
-  :depends-on ("format-ansi" "clunit2")
+  :depends-on ("format-ansi" "cl-lustre-tests")
   :pathname "tests"
   :components ((:file "package")
                (:file "runner" :depends-on ("package"))
@@ -24,4 +27,4 @@
                (:file "main" :depends-on ("test-helpers")))
   :description "Test system for format-ansi"
   :perform (test-op (op c)
-                    (uiop:symbol-call :format-ansi/tests :run-tests)))
+                    (uiop:symbol-call :lustre-tests :test)))
