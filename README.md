@@ -126,3 +126,7 @@ Run from the REPL:
 ;; run individual test
 (parachute:test 'format-ansi/tests::no-args)
 ```
+
+## AI Policy
+
+This project's source code is written by hand. AI is only used for the documentation and help with tests.
