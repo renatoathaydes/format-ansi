@@ -1,0 +1,70 @@
+edit-distance
+=============
+[![test](https://github.com/belambert/cl-edit-distance/actions/workflows/test.yml/badge.svg)](https://github.com/belambert/cl-edit-distance/actions/workflows/test.yml)
+
+Using
+-----
+Computes the [edit distance](https://en.wikipedia.org/wiki/Levenshtein_distance)
+(aka Levenshtein distance) between two sequences. This is a common distance measure.
+
+For example, to compute the distance between two sequences:
+
+    (edit-distance:distance '(1 2 3 4 5) '(2 3 4 5 6))
+
+To compute the sequence of edit operations needed to convert sequence
+1 into sequence two, use the `diff` function
+
+    (edit-distance:diff '(1 2 3 4 5) '(2 3 4 5 6))
+
+That will return two values a structure, as follows, and the distance.
+
+    ((:DELETION 1 NIL) (:MATCH 2 2) (:MATCH 3 3) (:MATCH 4 4) (:MATCH 5 5) (:INSERTION NIL 6))
+    2
+
+That structure can be printed more readibly with the `FORMAT-DIFF`
+function
+
+    (edit-distance:format-diff *path*)
+
+Or, you can compute the diff and print it readably together by calling `PRINT-DIFF`:
+
+    (edit-distance:print-diff '(1 2 3 4 5) '(2 3 4 5 6))
+
+which will print a result like this:
+
+    seq1: 1   2 3 4 5 *** []
+    seq2: *** 2 3 4 5 6   []
+
+Substitutions are shown in square brackets (so `"foo1"` and `"foo2"`
+print as `f o o [1]` and `f o o [2]`), and insertions and deletions
+are shown as asterisks. Several options are available to the
+`FORMAT-DIFF` and `PRINT-DIFF` to print a prefix and suffix for each
+line.
+
+Additionally, other equality functions can be used, so this evaluates
+to a distance of zero:
+
+     (edit-distance:distance '("ONE" "TWO" "THREE") '("one" "two"
+     "three") :test 'string-equal)
+
+Any type of sequence may be used, but for speed the input sequences
+are copied into new arrays. If speed is a major concern make sure to
+provide simple vectors as your input sequences.
+
+Testing
+-------
+Tests run in CI on every push to `main` and on pull requests. To run them locally with SBCL and Quicklisp:
+
+    sbcl --eval "(ql:quickload :edit-distance-test)" --eval "(asdf:test-system :edit-distance)"
+
+TODO
+----
+- Remove the 100,000 element limit in the fast distance path.
+- Default the `format-diff` prefixes to `seq1` and `seq2` like `print-diff`.
+- Make `insertions-and-deletions` handle `NIL` elements.
+- Pad matched elements in printed diffs so columns stay aligned with custom `:test` functions.
+- Remove unused functions: `compute-alignment`, `edit-distance`, and `sequence-diff`.
+- Test on more Lisp implementations in CI (abcl, ccl, clisp, cmucl).
+
+---
+Released under the [MIT License](LICENSE.txt).
